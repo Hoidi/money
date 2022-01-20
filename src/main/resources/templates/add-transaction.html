@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Transaction</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+
+<form method="post" th:object="${transaction}" th:action="@{/money}">
+    <div class="form-row">
+        <div class="col">
+            <div class="form-group">
+                <label for="from">Who spent money</label>
+                <select class="form-control" id="from" name="from">
+                    <option th:each="user: ${allUsers}" th:text="${user.getName()}" name="from"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label for="to">Who owes money</label>
+                <select class="form-control" id="to" name="to">
+                    <option th:each="user: ${allUsers}" th:text="${user.getName()}" name="to"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!--
+    <input class="form-control" id="totalSum" type="number" name="totalSum" placeholder="Sum" pattern="[0-9]*" required>
+    -->
+
+    <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="half" name="half" onclick="myFunction()">
+        <label class="custom-control-label" for="half">Half</label>
+    </div>
+
+    <input class="form-control" id="moneyAmount" type="number" name="moneyAmount" placeholder="Owed amount" pattern="[0-9]*" required>
+
+    <input class="form-control" id="name" type="text" name="name" placeholder="Name" required>
+
+    <button type="submit" class="btn btn-primary">Add Transaction</button>
+</form>
+
+<p id="mytext" style="display:none">Checkbox is CHECKED!</p>
+
+<script>
+    function myFunction() {
+        var checkBox = document.getElementById("half");
+        var text = document.getElementById("moneyAmount");
+        if (checkBox.checked == true){
+            text.placeholder = "Total money";
+        } else {
+            text.placeholder = "Owed amount";
+        }
+    }
+</script>
+
+</body>
+</html>
