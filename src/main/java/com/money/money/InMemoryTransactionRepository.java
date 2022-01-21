@@ -2,6 +2,7 @@ package com.money.money;
 
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,5 +50,16 @@ public class InMemoryTransactionRepository implements TransactionRepository{
     @Override
     public List<Transaction> getAllTransactions() {
         return transactions;
+    }
+
+    @Override
+    public void deleteTransaction(Instant instant) {
+        // Improvement: Make List binary tree or at least sorted
+        boolean deleted = transactions.removeIf(t -> t.getInstant().equals(instant));
+        if (deleted) {
+            System.out.println("Transaction deleted");
+        } else {
+            System.out.println("No transaction deleted");
+        }
     }
 }

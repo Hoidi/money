@@ -1,5 +1,6 @@
 package com.money.money;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface TransactionRepository {
@@ -13,4 +14,6 @@ public interface TransactionRepository {
     int numberOfTransactions();
 
     List<Transaction> getAllTransactions();
+
+    void deleteTransaction(Instant instant);
 }

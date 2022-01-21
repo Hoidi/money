@@ -3,10 +3,9 @@ package com.money.money.controller;
 import com.money.money.MoneyFacade;
 import com.money.money.Transaction;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -43,6 +42,13 @@ public class TransactionController {
         }
 
         return sb.toString();
+    }
+
+    @DeleteMapping("/deletetransaction/{transInstans}")
+    void addUser(@PathVariable("transInstans") String transInstans) {
+        Instant instant = Instant.parse(transInstans);
+
+        moneyFacade.deleteTransaction(instant);
     }
 
 
