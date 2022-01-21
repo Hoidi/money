@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Add Transaction</title>
-    <link rel="stylesheet" type="text/css" href="custom.css">
+
+    <link rel="stylesheet" type="text/css" href="../css/start.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 
@@ -82,7 +83,7 @@
 
     <div class="form-row">
         <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="half" name="half" onclick="myFunction()">
+            <input type="checkbox" class="custom-control-input" id="half" name="half" th:onclick="myFunction()">
             <label class="custom-control-label" for="half">Half</label>
         </div>
     </div>
@@ -104,7 +105,13 @@
     <h2 class="transaction-title">Transactions</h2>
     <div class="transaction-list">
         <hr width="80%">
-        <div th:each="transaction: ${allTransactions}">
+        <div th:each="transaction: ${allTransactions}"> <!-- deleteTransaction(${transaction.getInstant().toString()}) -->
+            <img th:src="@{../static/img/cross.svg}"
+                 width="20px"
+                 style="float: right;
+                 cursor: pointer"
+                 th:attr="onclick=|deleteTransaction('${transaction.getInstant().toString()}')|"
+            />
             <h5 class="transaction-item" th:text="${transaction.getName()}">Name</h5>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <span class="transaction-item" th:text="${transaction.getDate()}">Time</span><br>
@@ -114,13 +121,22 @@
             <span class="transaction-item" th:text="${transaction.getOwedSum()}">FromTo</span>
             <span class="transaction-item">-></span>
             <span class="transaction-item" th:text="${transaction.getTo().getName()}">FromTo</span><br>
-            <!-- TODO: Add a way to delete a transaction. Maybe delete via some random ID that's not shown -->
             <hr width="80%">
         </div>
     </div>
 </div>
 
 <script>
+    function deleteTransaction(transactionInstant) {
+        // TODO add some way to undo deletion. Maybe some cancelable event that counts down
+        // TODO refresh list after it's been done
+        console.log("delete")
+        console.log(transactionInstant)
+        const xhr = new XMLHttpRequest();
+        const url = "deletetransaction/" + transactionInstant;
+        xhr.open("DELETE", url);
+        xhr.send();
+    }
     function myFunction() {
         const checkBox = document.getElementById("half");
         const text = document.getElementById("moneyAmount");
