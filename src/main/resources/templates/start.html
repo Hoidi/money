@@ -109,7 +109,8 @@
             <img th:src="@{../static/img/cross.svg}"
                  width="20px"
                  style="float: right;
-                 cursor: pointer"
+                 cursor: pointer;
+                 margin-right: 5px"
                  th:attr="onclick=|deleteTransaction('${transaction.getInstant().toString()}')|"
             />
             <h5 class="transaction-item" th:text="${transaction.getName()}">Name</h5>
@@ -126,12 +127,36 @@
     </div>
 </div>
 
+<button class="btn btn-primary" onclick="addNewToast()">Add another toast</button>
+
+<div id="toasts" style="width: 400px; height: 500px; background-color: aqua; display: flex; flex-direction: column">
+    <!-- TOASTS ARE PLACED IN HERE -->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
 <script>
+    var option = {
+        delay : 5000,
+        animation: true,
+        autohide: true
+    }
+    $('.toast').toast(option)
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     function deleteTransaction(transactionInstant) {
         // TODO add some way to undo deletion. Maybe some cancelable event that counts down
         // TODO refresh list after it's been done
+
         console.log("delete")
-        console.log(transactionInstant)
+        console.log(transactionInstant);
+        addNewToast(transactionInstant.toString());
         const xhr = new XMLHttpRequest();
         const url = "deletetransaction/" + transactionInstant;
         xhr.open("DELETE", url);
@@ -146,7 +171,89 @@
             text.placeholder = "Owed amount";
         }
     }
+    function addNewToast(toastIDIncoming) {
+        let toastID;
+        if (toastIDIncoming === undefined) {
+            toastID = "undefinedID";
+        } else {
+            toastID = toastIDIncoming
+                .toString()
+                .replaceAll(':','')
+                .replaceAll('-','')
+                .replaceAll('.','');
+        }
+
+        const toast = document.createElement("DIV");
+        toast.setAttribute("class", "toast");
+        toast.setAttribute("role", "alter");
+        toast.setAttribute("id", toastID);
+
+        const toasterHeader = document.createElement("DIV");
+        toasterHeader.setAttribute("class", "toast-header");
+
+        const img = document.createElement("IMG");
+        img.setAttribute("class", "rounded mr-2");
+        img.setAttribute("src", "../static/img/receipt-solid.svg");
+        img.setAttribute("width", "16px");
+
+        const strong = document.createElement("STRONG");
+        const strongTextNode = document.createTextNode("Bootstrap");
+        strong.appendChild(strongTextNode);
+
+        var small = document.createElement("SMALL");
+        small.setAttribute("class", "text-muted");
+        small.setAttribute("style", "margin-left: 5px; margin-right: 5px");
+        const smallTextNode = document.createTextNode("just now");
+        small.appendChild(smallTextNode);
+
+
+        const button = document.createElement("BUTTON");
+        button.setAttribute("class", "text-muted btn");
+        button.setAttribute("type", "button");
+        button.setAttribute("data-dismiss", "toast");
+        const span = document.createElement("SPAN");
+        const imgCross = document.createElement("IMG");
+        imgCross.setAttribute("src", "../static/img/cross.svg");
+        imgCross.setAttribute("width", "16px");
+        span.appendChild(imgCross);
+        button.appendChild(span);
+
+        toasterHeader.appendChild(img);
+        toasterHeader.appendChild(strong);
+        toasterHeader.appendChild(small);
+        toasterHeader.appendChild(button);
+
+        toast.appendChild(toasterHeader);
+
+        const toastBody = document.createElement("DIV");
+        toastBody.setAttribute("class", "toast-body");
+        const toastBodyTextnode = document.createTextNode("Delete");
+        toastBody.appendChild(toastBodyTextnode);
+
+        toast.appendChild(toastBody);
+
+        document.getElementById("toasts").appendChild(toast);
+
+        $(".toast").toast(option);
+        $('#' + toastID).toast("show");
+    }
 </script>
+
+<!--
+<div class="toast" role="alert">
+    <div class="toast-header">
+        <img src="../static/img/receipt-solid.svg" width="16px" class="rounded mr-2" alt="...">
+        <strong>Bootstrap</strong>
+        <small class="text-muted">just now</small>
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        See? Just like this.
+    </div>
+</div>
+-->
 
 </body>
 </html>
