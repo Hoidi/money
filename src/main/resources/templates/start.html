@@ -58,6 +58,14 @@
         text-align: left;
         overflow-y: scroll;
     }
+    #toasts {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: row-reverse;
+        z-index: 4;
+    }
 </style>
 
 <body>
@@ -106,13 +114,15 @@
     <h2 class="transaction-title">Transactions</h2>
     <div class="transaction-list">
         <hr width="80%">
-        <div th:each="transaction: ${allTransactions}"> <!-- deleteTransaction(${transaction.getInstant().toString()}) -->
+        <div th:each="transaction: ${allTransactions}">
             <img th:src="@{../static/img/cross.svg}"
                  width="20px"
                  style="float: right;
                  cursor: pointer;
                  margin-right: 5px"
-                 th:attr="onclick=|deleteTransaction('${transaction.getInstant().toString()}')|"
+                 th:data-instant = "${transaction.getInstant().toString()}"
+                 th:data-name = "${transaction.getName().toString()}"
+                 th:onclick="deleteTransaction(this.getAttribute('data-instant'), this.getAttribute('data-name'))"
             />
             <h5 class="transaction-item" th:text="${transaction.getName()}">Name</h5>
             &nbsp;&nbsp;&nbsp;&nbsp;
@@ -130,7 +140,7 @@
 
 <button class="btn btn-primary" onclick="addNewToast()">Add another toast</button>
 
-<div id="toasts" style="width: 400px; height: 500px; background-color: aqua; display: flex; flex-direction: column">
+<div id="toasts">
     <!-- TOASTS ARE PLACED IN HERE -->
 </div>
 
@@ -151,13 +161,11 @@
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-    function deleteTransaction(transactionInstant) {
+    function deleteTransaction(transactionInstant, name) {
         // TODO add some way to undo deletion. Maybe some cancelable event that counts down
         // TODO refresh list after it's been done
 
-        console.log("delete")
-        console.log(transactionInstant);
-        addNewToast(transactionInstant.toString());
+        addNewToast(transactionInstant.toString(), name);
         const xhr = new XMLHttpRequest();
         const url = "deletetransaction/" + transactionInstant;
         xhr.open("DELETE", url);
@@ -172,7 +180,7 @@
             text.placeholder = "Owed amount";
         }
     }
-    function addNewToast(toastIDIncoming) {
+    function addNewToast(toastIDIncoming, name) {
         let toastID;
         if (toastIDIncoming === undefined) {
             toastID = "undefinedID";
@@ -228,7 +236,7 @@
 
         const toastBody = document.createElement("DIV");
         toastBody.setAttribute("class", "toast-body");
-        const toastBodyTextnode = document.createTextNode("Delete");
+        const toastBodyTextnode = document.createTextNode("Deleting " + name);
         toastBody.appendChild(toastBodyTextnode);
 
         toast.appendChild(toastBody);
