@@ -237,7 +237,20 @@
         const toastBody = document.createElement("DIV");
         toastBody.setAttribute("class", "toast-body");
         const toastBodyTextnode = document.createTextNode("Deleting " + name);
+
+        const undoButton = document.createElement("BUTTON");
+        undoButton.setAttribute("class", "btn");
+        undoButton.setAttribute("type", "button");
+        const spanUndu = document.createElement("SPAN");
+        const imgUndo = document.createElement("IMG");
+        imgUndo.setAttribute("src", "../static/img/undo-solid.svg");
+        imgUndo.setAttribute("width", "16px");
+        spanUndu.appendChild(imgUndo);
+        undoButton.appendChild(spanUndu);
+
+
         toastBody.appendChild(toastBodyTextnode);
+        toastBody.appendChild(undoButton);
 
         toast.appendChild(toastBody);
 
