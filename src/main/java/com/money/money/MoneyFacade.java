@@ -59,6 +59,10 @@ public class MoneyFacade {
         transactionRepository.deleteTransaction(instant);
     }
 
+    public void undeleteTransaction(Instant instant) {
+        transactionRepository.undeleteTransaction(instant);
+    }
+
     public record NewTransactionDTO(String from, String to, Boolean half, int moneyAmount, String name) {
 
     }

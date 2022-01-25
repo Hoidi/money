@@ -165,7 +165,7 @@
         // TODO add some way to undo deletion. Maybe some cancelable event that counts down
         // TODO refresh list after it's been done
 
-        addNewToast(transactionInstant.toString(), name);
+        addNewToast(transactionInstant, name);
         const xhr = new XMLHttpRequest();
         const url = "deletetransaction/" + transactionInstant;
         xhr.open("DELETE", url);
@@ -180,12 +180,12 @@
             text.placeholder = "Owed amount";
         }
     }
-    function addNewToast(toastIDIncoming, name) {
+    function addNewToast(transactionInstant, name) {
         let toastID;
-        if (toastIDIncoming === undefined) {
+        if (transactionInstant === undefined) {
             toastID = "undefinedID";
         } else {
-            toastID = toastIDIncoming
+            toastID = transactionInstant
                 .toString()
                 .replaceAll(':','')
                 .replaceAll('-','')
@@ -205,22 +205,24 @@
         img.setAttribute("src", "../static/img/receipt-solid.svg");
         img.setAttribute("width", "16px");
 
-        const strong = document.createElement("STRONG");
+        const titleText = document.createElement("STRONG");
         const strongTextNode = document.createTextNode("Bootstrap");
-        strong.appendChild(strongTextNode);
+        titleText.appendChild(strongTextNode);
 
-        var small = document.createElement("SMALL");
-        small.setAttribute("class", "text-muted");
-        small.setAttribute("style", "margin-left: 5px; margin-right: 5px");
+        var timeText = document.createElement("SMALL");
+        timeText.setAttribute("class", "text-muted");
+        timeText.setAttribute("style", "margin-left: 5px; margin-right: 5px");
         const smallTextNode = document.createTextNode("just now");
-        small.appendChild(smallTextNode);
+        timeText.appendChild(smallTextNode);
 
 
         const button = document.createElement("BUTTON");
-        button.setAttribute("class", "text-muted btn");
+        button.setAttribute("class", "ml-2 mb-1 close");
         button.setAttribute("type", "button");
         button.setAttribute("data-dismiss", "toast");
+        button.setAttribute("aria-label", "Close");
         const span = document.createElement("SPAN");
+        span.setAttribute("aria-hidden", "true");
         const imgCross = document.createElement("IMG");
         imgCross.setAttribute("src", "../static/img/cross.svg");
         imgCross.setAttribute("width", "16px");
@@ -228,8 +230,8 @@
         button.appendChild(span);
 
         toasterHeader.appendChild(img);
-        toasterHeader.appendChild(strong);
-        toasterHeader.appendChild(small);
+        toasterHeader.appendChild(titleText);
+        toasterHeader.appendChild(timeText);
         toasterHeader.appendChild(button);
 
         toast.appendChild(toasterHeader);
@@ -239,9 +241,12 @@
         const toastBodyTextnode = document.createTextNode("Deleting " + name);
 
         const undoButton = document.createElement("BUTTON");
-        undoButton.setAttribute("class", "btn");
+        undoButton.setAttribute("class", "ml-2 mb-1 close");
+        undoButton.onclick = function() {undoDelete(transactionInstant);};
         undoButton.setAttribute("type", "button");
+        button.setAttribute("data-dismiss", "toast");
         const spanUndu = document.createElement("SPAN");
+        spanUndu.setAttribute("aria-hidden", "true");
         const imgUndo = document.createElement("IMG");
         imgUndo.setAttribute("src", "../static/img/undo-solid.svg");
         imgUndo.setAttribute("width", "16px");
@@ -258,6 +263,14 @@
 
         $(".toast").toast(option);
         $('#' + toastID).toast("show");
+    }
+    function undoDelete(transactionInstant) {
+        console.log("UNDO NOW")
+        console.log(transactionInstant)
+        const xhr = new XMLHttpRequest();
+        const url = "undeletetransaction/" + transactionInstant;
+        xhr.open("DELETE", url);
+        xhr.send();
     }
 </script>
 

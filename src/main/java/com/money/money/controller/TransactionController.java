@@ -18,9 +18,7 @@ public class TransactionController {
     }
 
     @GetMapping("/trans/{name}")
-    String owedSum(@PathVariable("name") String name, Model model) {
-        model.addAttribute("something", "this is my attribute");
-
+    String owedSum(@PathVariable("name") String name) {
         int owedSum = moneyFacade.howMuchDoUserOwe(moneyFacade.getUser(name));
         return String.valueOf(owedSum);
     }
@@ -45,10 +43,17 @@ public class TransactionController {
     }
 
     @DeleteMapping("/deletetransaction/{transInstans}")
-    void addUser(@PathVariable("transInstans") String transInstans) {
+    void deleteTransaction(@PathVariable("transInstans") String transInstans) {
         Instant instant = Instant.parse(transInstans);
 
         moneyFacade.deleteTransaction(instant);
+    }
+
+    @DeleteMapping("/undeletetransaction/{transInstans}")
+    void undeleteTransaction(@PathVariable("transInstans") String transInstans) {
+        Instant instant = Instant.parse(transInstans);
+
+        moneyFacade.undeleteTransaction(instant);
     }
 
 

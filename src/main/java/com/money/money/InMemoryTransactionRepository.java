@@ -9,7 +9,10 @@ import java.util.List;
 @Component
 public class InMemoryTransactionRepository implements TransactionRepository{
 
+    // Improvement: Make List binary tree or at least sorted
     private final List<Transaction> transactions = new ArrayList<>();
+
+    private final List<Instant> transactionInstantToDelete = new ArrayList<>();
 
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
@@ -54,12 +57,29 @@ public class InMemoryTransactionRepository implements TransactionRepository{
 
     @Override
     public void deleteTransaction(Instant instant) {
-        // Improvement: Make List binary tree or at least sorted
-        boolean deleted = transactions.removeIf(t -> t.getInstant().equals(instant));
-        if (deleted) {
-            System.out.println("Transaction deleted");
-        } else {
-            System.out.println("No transaction deleted");
+        transactionInstantToDelete.add(instant);
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+        if (transactionInstantToDelete.removeIf(t -> t.equals(instant))) {
+
+            boolean deleted = transactions.removeIf(t -> t.getInstant().equals(instant));
+            if (deleted) {
+                System.out.println("Transaction deleted");
+            } else {
+                System.out.println("No transaction deleted as it didn't exist");
+            }
+        } else {
+            System.out.println("Deletion undone");
+        }
+    }
+
+    @Override
+    public void undeleteTransaction(Instant instant) {
+        transactionInstantToDelete.remove(instant);
     }
 }
