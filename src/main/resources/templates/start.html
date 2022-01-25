@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Add Transaction</title>
-    <link rel="stylesheet" type="text/css" href="custom.css">
+
+    <link rel="stylesheet" type="text/css" href="../css/start.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 
@@ -44,6 +45,8 @@
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         z-index: 2;
+        display: flex;
+        flex-direction: column;
     }
     .transaction-title {
         color: aliceblue;
@@ -53,8 +56,15 @@
     }
     .transaction-list {
         text-align: left;
-        height: 91%;
         overflow-y: scroll;
+    }
+    #toasts {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: row-reverse;
+        z-index: 4;
     }
 </style>
 
@@ -82,17 +92,17 @@
 
     <div class="form-row">
         <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="half" name="half" onclick="myFunction()">
+            <input type="checkbox" class="custom-control-input" id="half" name="half" th:onclick="myFunction()">
             <label class="custom-control-label" for="half">Half</label>
         </div>
     </div>
 
     <div class="form-row">
-        <input class="form-control" id="moneyAmount" type="number" name="moneyAmount" placeholder="Owed amount" pattern="[0-9]*" required>
+        <input class="form-control" id="moneyAmount" type="number" name="moneyAmount" autocomplete="off" placeholder="Owed amount" pattern="[0-9]*" required>
     </div>
 
     <div class="form-row">
-    <input class="form-control" id="name" type="text" name="name" placeholder="Name" required>
+    <input class="form-control" id="name" type="text" name="name" placeholder="Name" autocomplete="off" required>
     </div>
 
     <div class="form-row">
@@ -105,6 +115,15 @@
     <div class="transaction-list">
         <hr width="80%">
         <div th:each="transaction: ${allTransactions}">
+            <img th:src="@{../static/img/cross.svg}"
+                 width="20px"
+                 style="float: right;
+                 cursor: pointer;
+                 margin-right: 5px"
+                 th:data-instant = "${transaction.getInstant().toString()}"
+                 th:data-name = "${transaction.getName().toString()}"
+                 th:onclick="deleteTransaction(this.getAttribute('data-instant'), this.getAttribute('data-name'))"
+            />
             <h5 class="transaction-item" th:text="${transaction.getName()}">Name</h5>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <span class="transaction-item" th:text="${transaction.getDate()}">Time</span><br>
@@ -114,13 +133,44 @@
             <span class="transaction-item" th:text="${transaction.getOwedSum()}">FromTo</span>
             <span class="transaction-item">-></span>
             <span class="transaction-item" th:text="${transaction.getTo().getName()}">FromTo</span><br>
-            <!-- TODO: Add a way to delete a transaction. Maybe delete via some random ID that's not shown -->
             <hr width="80%">
         </div>
     </div>
 </div>
 
+<button class="btn btn-primary" onclick="addNewToast()">Add another toast</button>
+
+<div id="toasts">
+    <!-- TOASTS ARE PLACED IN HERE -->
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
 <script>
+    var option = {
+        delay : 5000,
+        animation: true,
+        autohide: true
+    }
+    $('.toast').toast(option)
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    function deleteTransaction(transactionInstant, name) {
+        // TODO add some way to undo deletion. Maybe some cancelable event that counts down
+        // TODO refresh list after it's been done
+
+        addNewToast(transactionInstant, name);
+        const xhr = new XMLHttpRequest();
+        const url = "deletetransaction/" + transactionInstant;
+        xhr.open("DELETE", url);
+        xhr.send();
+    }
     function myFunction() {
         const checkBox = document.getElementById("half");
         const text = document.getElementById("moneyAmount");
@@ -130,7 +180,115 @@
             text.placeholder = "Owed amount";
         }
     }
+    function addNewToast(transactionInstant, name) {
+        let toastID;
+        if (transactionInstant === undefined) {
+            toastID = "undefinedID";
+        } else {
+            toastID = transactionInstant
+                .toString()
+                .replaceAll(':','')
+                .replaceAll('-','')
+                .replaceAll('.','');
+        }
+
+        const toast = document.createElement("DIV");
+        toast.setAttribute("class", "toast");
+        toast.setAttribute("role", "alter");
+        toast.setAttribute("id", toastID);
+
+        const toasterHeader = document.createElement("DIV");
+        toasterHeader.setAttribute("class", "toast-header");
+
+        const img = document.createElement("IMG");
+        img.setAttribute("class", "rounded mr-2");
+        img.setAttribute("src", "../static/img/receipt-solid.svg");
+        img.setAttribute("width", "16px");
+
+        const titleText = document.createElement("STRONG");
+        const strongTextNode = document.createTextNode("Bootstrap");
+        titleText.appendChild(strongTextNode);
+
+        var timeText = document.createElement("SMALL");
+        timeText.setAttribute("class", "text-muted");
+        timeText.setAttribute("style", "margin-left: 5px; margin-right: 5px");
+        const smallTextNode = document.createTextNode("just now");
+        timeText.appendChild(smallTextNode);
+
+
+        const button = document.createElement("BUTTON");
+        button.setAttribute("class", "ml-2 mb-1 close");
+        button.setAttribute("type", "button");
+        button.setAttribute("data-dismiss", "toast");
+        button.setAttribute("aria-label", "Close");
+        const span = document.createElement("SPAN");
+        span.setAttribute("aria-hidden", "true");
+        const imgCross = document.createElement("IMG");
+        imgCross.setAttribute("src", "../static/img/cross.svg");
+        imgCross.setAttribute("width", "16px");
+        span.appendChild(imgCross);
+        button.appendChild(span);
+
+        toasterHeader.appendChild(img);
+        toasterHeader.appendChild(titleText);
+        toasterHeader.appendChild(timeText);
+        toasterHeader.appendChild(button);
+
+        toast.appendChild(toasterHeader);
+
+        const toastBody = document.createElement("DIV");
+        toastBody.setAttribute("class", "toast-body");
+        const toastBodyTextnode = document.createTextNode("Deleting " + name);
+
+        const undoButton = document.createElement("BUTTON");
+        undoButton.setAttribute("class", "ml-2 mb-1 close");
+        undoButton.onclick = function() {undoDelete(transactionInstant);};
+        undoButton.setAttribute("type", "button");
+        button.setAttribute("data-dismiss", "toast");
+        const spanUndu = document.createElement("SPAN");
+        spanUndu.setAttribute("aria-hidden", "true");
+        const imgUndo = document.createElement("IMG");
+        imgUndo.setAttribute("src", "../static/img/undo-solid.svg");
+        imgUndo.setAttribute("width", "16px");
+        spanUndu.appendChild(imgUndo);
+        undoButton.appendChild(spanUndu);
+
+
+        toastBody.appendChild(toastBodyTextnode);
+        toastBody.appendChild(undoButton);
+
+        toast.appendChild(toastBody);
+
+        document.getElementById("toasts").appendChild(toast);
+
+        $(".toast").toast(option);
+        $('#' + toastID).toast("show");
+    }
+    function undoDelete(transactionInstant) {
+        console.log("UNDO NOW")
+        console.log(transactionInstant)
+        const xhr = new XMLHttpRequest();
+        const url = "undeletetransaction/" + transactionInstant;
+        xhr.open("DELETE", url);
+        xhr.send();
+    }
 </script>
+
+<!--
+<div class="toast" role="alert">
+    <div class="toast-header">
+        <img src="../static/img/receipt-solid.svg" width="16px" class="rounded mr-2" alt="...">
+        <strong>Bootstrap</strong>
+        <small class="text-muted">just now</small>
+        <button type="button" class="close">
+            <span>&times;</span>
+        </button>
+    </div>
+    <div class="toast-body">
+        See? Just like this.
+    </div>
+</div>
+-->
 
 </body>
 </html>

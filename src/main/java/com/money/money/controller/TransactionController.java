@@ -3,10 +3,9 @@ package com.money.money.controller;
 import com.money.money.MoneyFacade;
 import com.money.money.Transaction;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -19,9 +18,7 @@ public class TransactionController {
     }
 
     @GetMapping("/trans/{name}")
-    String owedSum(@PathVariable("name") String name, Model model) {
-        model.addAttribute("something", "this is my attribute");
-
+    String owedSum(@PathVariable("name") String name) {
         int owedSum = moneyFacade.howMuchDoUserOwe(moneyFacade.getUser(name));
         return String.valueOf(owedSum);
     }
@@ -43,6 +40,20 @@ public class TransactionController {
         }
 
         return sb.toString();
+    }
+
+    @DeleteMapping("/deletetransaction/{transInstans}")
+    void deleteTransaction(@PathVariable("transInstans") String transInstans) {
+        Instant instant = Instant.parse(transInstans);
+
+        moneyFacade.deleteTransaction(instant);
+    }
+
+    @DeleteMapping("/undeletetransaction/{transInstans}")
+    void undeleteTransaction(@PathVariable("transInstans") String transInstans) {
+        Instant instant = Instant.parse(transInstans);
+
+        moneyFacade.undeleteTransaction(instant);
     }
 
 
