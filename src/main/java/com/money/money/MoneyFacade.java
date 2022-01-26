@@ -1,8 +1,10 @@
 package com.money.money;
 
+import org.javatuples.Pair;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -63,6 +65,38 @@ public class MoneyFacade {
         transactionRepository.undeleteTransaction(instant);
     }
 
+    public ArrayList<Pair<String, Integer>> getDebts(String userName) {
+        ArrayList<Pair<String, Integer>> debts = new ArrayList<>();
+        User user = getUser(userName);
+
+        System.out.println("hello");
+        for (User u: getAllUsers()) {
+            if (!u.equals(user)) {
+                debts.add(new Pair<>(u.getName(), getDebt(user, u)));
+            }
+        }
+
+        System.out.println(debts);
+
+        return debts;
+    }
+
+    private Integer getDebt(User user, User u) {
+        int debt = 0;
+
+        for (Transaction t: getAllTransactions()) {
+            if (t.getFrom().equals(user) && t.getTo().equals(u)) {
+                debt -= t.getOwedSum();
+            } else if (t.getFrom().equals(u) && t.getTo().equals(user)) {
+                debt += t.getOwedSum();
+            }
+        }
+
+        System.out.println("Dept from " + user.getName() + " to " + u.getName() + " is " + debt);
+
+        return debt;
+    }
+
     public record NewTransactionDTO(String from, String to, Boolean half, int moneyAmount, String name) {
 
     }
@@ -95,11 +129,6 @@ public class MoneyFacade {
                 "Clear " + amount + " dept");
 
         transactionRepository.addTransaction(transaction);
-    }
-
-    public int howMuchDoUserOwe(User user) {
-        // TODO Calculate how much user owes to all other users
-        return 0;
     }
 
     public User getUser(String name) {

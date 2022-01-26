@@ -2,10 +2,11 @@ package com.money.money.controller;
 
 import com.money.money.MoneyFacade;
 import com.money.money.Transaction;
-import org.springframework.ui.Model;
+import org.javatuples.Pair;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,12 +16,6 @@ public class TransactionController {
 
     TransactionController(MoneyFacade moneyFacade) {
         this.moneyFacade = moneyFacade;
-    }
-
-    @GetMapping("/trans/{name}")
-    String owedSum(@PathVariable("name") String name) {
-        int owedSum = moneyFacade.howMuchDoUserOwe(moneyFacade.getUser(name));
-        return String.valueOf(owedSum);
     }
 
     @GetMapping("/transall")
@@ -56,6 +51,13 @@ public class TransactionController {
         moneyFacade.undeleteTransaction(instant);
     }
 
+    @GetMapping("/getdebt/{user}")
+    String getDept(@PathVariable("user") String user) {
+        ArrayList<Pair<String, Integer>> depts =  moneyFacade.getDebts(user);
+        System.out.println(depts);
+        System.out.println(depts.toString());
+        return depts.toString();
+    }
 
     public List<Transaction> getAllTransactions() {
         return moneyFacade.getAllTransactions();
