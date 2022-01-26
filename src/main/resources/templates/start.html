@@ -19,6 +19,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
     label {
         color: aliceblue;
     }
@@ -65,6 +66,50 @@
         display: flex;
         flex-direction: row-reverse;
         z-index: 4;
+    }
+    .toast-header {
+        display: flex;
+        justify-content: space-between;
+    }
+    .toast-body {
+        display: flex;
+        flex-direction: row;
+    }
+
+
+
+    @media screen and (max-width: 1000px) {
+        .myform {
+            width: 80%;
+        }
+        .form-row .form-group {
+            height: 100px;
+        }
+        .transactions {
+            display: none;
+        }
+        #toasts {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: row-reverse;
+            width: 100%;
+            height: 10%;
+            z-index: 4;
+        }
+        .toast {
+            width: 80%;
+        }
+        .toast-body {
+            font-size: large;
+        }
+        .undo-image {
+            width: 50px;
+        }
+        .toast-header {
+            height: 50px;
+        }
     }
 </style>
 
@@ -229,10 +274,16 @@
         span.appendChild(imgCross);
         button.appendChild(span);
 
-        toasterHeader.appendChild(img);
-        toasterHeader.appendChild(titleText);
-        toasterHeader.appendChild(timeText);
-        toasterHeader.appendChild(button);
+        const toasterHeaderLeft = document.createElement("DIV");
+        const toasterHeaderRight = document.createElement("DIV");
+
+        toasterHeaderLeft.appendChild(img);
+        toasterHeaderLeft.appendChild(titleText);
+        toasterHeaderRight.appendChild(timeText);
+        toasterHeaderRight.appendChild(button);
+
+        toasterHeader.appendChild(toasterHeaderLeft);
+        toasterHeader.appendChild(toasterHeaderRight);
 
         toast.appendChild(toasterHeader);
 
@@ -248,6 +299,7 @@
         const spanUndu = document.createElement("SPAN");
         spanUndu.setAttribute("aria-hidden", "true");
         const imgUndo = document.createElement("IMG");
+        imgUndo.setAttribute("class", "undo-image");
         imgUndo.setAttribute("src", "../static/img/undo-solid.svg");
         imgUndo.setAttribute("width", "16px");
         spanUndu.appendChild(imgUndo);
