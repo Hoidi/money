@@ -128,8 +128,8 @@
 <body>
 
 <form class="myform" method="post" th:object="${transaction}" th:action="@{/money}">
-    <div class="form-row">
-        <div class="col">
+    <div class="form-row" style="padding-bottom: 0">
+        <div class="col" style="padding-left: 0">
             <div class="form-group">
                 <label for="from">Who spent money</label>
                 <select class="form-control" id="from" name="from">
@@ -137,7 +137,7 @@
                 </select>
             </div>
         </div>
-        <div class="col">
+        <div class="col"style="padding-right: 0">
             <div class="form-group">
                 <label for="to">Who owes money</label>
                 <select class="form-control" id="to" name="to">
