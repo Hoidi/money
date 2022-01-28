@@ -19,6 +19,7 @@ public class MoneyFacade {
 
         userRepository.addUser(new User("unni"));
         userRepository.addUser(new User("tobias"));
+        userRepository.addUser(new User("sponken"));
 
         transactionRepository.addTransaction(new Transaction(
                 userRepository.getUser("unni"),
@@ -69,14 +70,11 @@ public class MoneyFacade {
         ArrayList<Pair<String, Integer>> debts = new ArrayList<>();
         User user = getUser(userName);
 
-        System.out.println("hello");
         for (User u: getAllUsers()) {
             if (!u.equals(user)) {
                 debts.add(new Pair<>(u.getName(), getDebt(user, u)));
             }
         }
-
-        System.out.println(debts);
 
         return debts;
     }
@@ -91,8 +89,6 @@ public class MoneyFacade {
                 debt += t.getOwedSum();
             }
         }
-
-        System.out.println("Dept from " + user.getName() + " to " + u.getName() + " is " + debt);
 
         return debt;
     }
