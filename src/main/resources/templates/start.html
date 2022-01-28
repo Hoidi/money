@@ -39,7 +39,6 @@
         transform: translate(0, -50%);
         background: #3A6161;
         box-shadow: 0 0 10px black;
-        padding-left: 8px;
         padding-top: 5px;
         text-align: center;
         z-index: 2;
@@ -48,23 +47,29 @@
     }
     .transactions {
         right: 0;
+        padding-left: 8px;
         border-top-left-radius: 15px;
         border-bottom-left-radius: 15px;
     }
-    .dept {
+    .debt {
         left: 0;
+        padding-left: 8px;
+        padding-right: 8px;
         border-top-right-radius: 15px;
         border-bottom-right-radius: 15px;
     }
     .sidebar-title {
         color: aliceblue;
     }
-    .transaction-item {
+    .sidebar-text-small {
         color: aliceblue;
     }
     .transaction-list {
         text-align: left;
         overflow-y: scroll;
+    }
+    .debt-list {
+        text-align: left;
     }
     #toasts {
         position: absolute;
@@ -167,6 +172,7 @@
     <div class="transaction-list">
         <hr width="80%">
         <div th:each="transaction: ${allTransactions}">
+            <!-- put everything into a div and have the class as getInstant() and do .setAttribute("display", "none") to hide it -->
             <img th:src="@{../static/img/cross.svg}"
                  width="20px"
                  style="float: right;
@@ -176,22 +182,31 @@
                  th:data-name = "${transaction.getName().toString()}"
                  th:onclick="deleteTransaction(this.getAttribute('data-instant'), this.getAttribute('data-name'))"
             />
-            <h5 class="transaction-item" th:text="${transaction.getName()}">Name</h5>
+            <h5 class="sidebar-text-small" th:text="${transaction.getName()}">Name</h5>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="transaction-item" th:text="${transaction.getDate()}">Time</span><br>
+            <span class="sidebar-text-small" th:text="${transaction.getDate()}">Time</span><br>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <span class="transaction-item" th:text="${transaction.getFrom().getName()}">FromTo</span>
-            <span class="transaction-item">--</span>
-            <span class="transaction-item" th:text="${transaction.getOwedSum()}">FromTo</span>
-            <span class="transaction-item">-></span>
-            <span class="transaction-item" th:text="${transaction.getTo().getName()}">FromTo</span><br>
+            <span class="sidebar-text-small" th:text="${transaction.getFrom().getName()}">FromTo</span>
+            <span class="sidebar-text-small">--</span>
+            <span class="sidebar-text-small" th:text="${transaction.getOwedSum()}">FromTo</span>
+            <span class="sidebar-text-small">-></span>
+            <span class="sidebar-text-small" th:text="${transaction.getTo().getName()}">FromTo</span><br>
             <hr width="80%">
         </div>
     </div>
 </div>
 
-<div class="sidebar dept">
-    <h2 class="sidebar-title">Depts</h2>
+<div class="sidebar debt">
+    <h2 class="sidebar-title">Debts</h2>
+    <div style="display: flex">
+        <select class="form-control" onChange="viewDebt(this);">
+            <option th:each="user: ${allUsers}" th:text="${user.getName()}"></option>
+        </select>
+        <!-- <button style="width: 30%; margin-left: 10px" class="btn btn-primary submit" onclick="viewDebt()">Go</button> -->
+    </div>
+    <div class="debt-list" id="sidebar-debt">
+
+    </div>
 </div>
 
 <button class="btn btn-primary" onclick="addNewToast()">Add another toast</button>
@@ -334,6 +349,50 @@
         const url = "undeletetransaction/" + transactionInstant;
         xhr.open("DELETE", url);
         xhr.send();
+    }
+    async function viewDebt(sel) {
+        const name = sel.options[sel.selectedIndex].text
+
+
+        const url = "getdebt/" + name;
+        let response = await fetch(url);
+
+        if (response.ok) {  // if HTTP-status is 200-299
+                            // get the response body (the method explained below)
+            let json = await response.json();
+            console.log(json)
+            const debtDiv = document.getElementById("sidebar-debt");
+            // empty div
+            while (debtDiv.firstChild) {
+                debtDiv.removeChild(debtDiv.firstChild);
+            }
+            for (const d in json) {
+                const userDebtJSON = json[d]
+
+                const userDebt = document.createElement("DIV");
+
+                const userDebtName = document.createElement("SPAN");
+                const debtTextName = document.createTextNode("Owes " + userDebtJSON["name"]);
+                userDebtName.setAttribute("class", "sidebar-text-small");
+                userDebtName.appendChild(debtTextName);
+
+                const userDebtDebt = document.createElement("SPAN");
+                const debtTextDebt = document.createTextNode(userDebtJSON["debt"] + " kr");
+                userDebtDebt.setAttribute("class", "sidebar-text-small");
+                userDebtDebt.appendChild(debtTextDebt);
+
+                userDebt.setAttribute("color", "cyan")
+                userDebt.setAttribute("background-color", "red")
+                userDebt.setAttribute("display", "flex");
+                userDebt.setAttribute("justify-content", "space-between");
+                userDebt.appendChild(userDebtName);
+                userDebt.appendChild(userDebtDebt);
+                debtDiv.appendChild(userDebt);
+            }
+        } else {
+            alert("HTTP-Error: " + response.status);
+        }
+
     }
 </script>
 
