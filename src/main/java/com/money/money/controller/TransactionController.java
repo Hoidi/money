@@ -2,10 +2,14 @@ package com.money.money.controller;
 
 import com.money.money.MoneyFacade;
 import com.money.money.Transaction;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.javatuples.Pair;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,12 +19,6 @@ public class TransactionController {
 
     TransactionController(MoneyFacade moneyFacade) {
         this.moneyFacade = moneyFacade;
-    }
-
-    @GetMapping("/trans/{name}")
-    String owedSum(@PathVariable("name") String name) {
-        int owedSum = moneyFacade.howMuchDoUserOwe(moneyFacade.getUser(name));
-        return String.valueOf(owedSum);
     }
 
     @GetMapping("/transall")
@@ -56,6 +54,37 @@ public class TransactionController {
         moneyFacade.undeleteTransaction(instant);
     }
 
+    @GetMapping("/getdebt/{user}")
+    String getDept(@PathVariable("user") String user) {
+        ArrayList<Pair<String, Integer>> debts =  moneyFacade.getDebts(user);
+
+        StringBuilder result = new StringBuilder();
+
+        result.append("{\n");
+
+        for (int i = 0; i < debts.size() - 1; i++) {
+            Pair p = debts.get(i);
+
+            result.append("\t \"userDebt" + i + "\": {\n");
+            result.append("\t\t\"name\": \"" + p.getValue0() + "\"");
+            result.append(",\n");
+            result.append("\t\t\"debt\": \"" + p.getValue1() + "\"\n");
+            result.append("\t}");
+
+            result.append(" , \n");
+        }
+
+        // add last element
+        result.append("\t \"userDebt" + (debts.size()-1) + "\": {\n");
+        result.append("\t\t\"name\": \"" + debts.get(debts.size()-1).getValue0() + "\"");
+        result.append(",\n");
+        result.append("\t\t\"debt\": \"" + debts.get(debts.size()-1).getValue1() + "\"\n");
+        result.append("\t}\n");
+
+        result.append("}");
+
+        return result.toString();
+    }
 
     public List<Transaction> getAllTransactions() {
         return moneyFacade.getAllTransactions();
