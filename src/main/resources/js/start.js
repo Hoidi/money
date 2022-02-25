@@ -8,6 +8,7 @@ $('.toast').toast(option)
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
 function deleteTransaction(transactionInstant, name) {
     // TODO refresh list after it's been done
 
@@ -17,6 +18,7 @@ function deleteTransaction(transactionInstant, name) {
     xhr.open("DELETE", url);
     xhr.send();
 }
+
 function myFunction() {
     const checkBox = document.getElementById("half");
     const text = document.getElementById("moneyAmount");
@@ -26,6 +28,7 @@ function myFunction() {
         text.placeholder = "Owed amount";
     }
 }
+
 function addNewToast(transactionInstant, name) {
     let toastID;
     if (transactionInstant === undefined) {
@@ -146,6 +149,8 @@ async function viewDebt(sel) {
 
             const userDebt = document.createElement("DIV");
 
+            userDebt.setAttribute("style","display: flex; justify-content: space-between");
+
             const userDebtName = document.createElement("SPAN");
             const debtTextName = document.createTextNode("Owes " + userDebtJSON["name"]);
             userDebtName.setAttribute("class", "sidebar-text-small");
@@ -156,10 +161,6 @@ async function viewDebt(sel) {
             userDebtDebt.setAttribute("class", "sidebar-text-small");
             userDebtDebt.appendChild(debtTextDebt);
 
-            userDebt.setAttribute("color", "cyan")
-            userDebt.setAttribute("background-color", "red")
-            userDebt.setAttribute("display", "flex");
-            userDebt.setAttribute("justify-content", "space-between");
             userDebt.appendChild(userDebtName);
             userDebt.appendChild(userDebtDebt);
             debtDiv.appendChild(userDebt);
