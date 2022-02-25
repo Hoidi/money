@@ -9,7 +9,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 function deleteTransaction(transactionInstant, name) {
-    // TODO add some way to undo deletion. Maybe some cancelable event that counts down
     // TODO refresh list after it's been done
 
     addNewToast(transactionInstant, name);
