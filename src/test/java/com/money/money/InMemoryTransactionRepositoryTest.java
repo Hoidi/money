@@ -20,12 +20,12 @@ class InMemoryTransactionRepositoryTest {
         User user3 = new User("User3");
         User user4 = new User("User4");
 
-        repo.addTransaction(new Transaction(user1, user2, 50, Instant.now(), "name1"));
-        repo.addTransaction(new Transaction(user1, user3, 10, Instant.now(), "name2"));
-        repo.addTransaction(new Transaction(user3, user4, 20, Instant.now(), "name3"));
-        repo.addTransaction(new Transaction(user3, user1, 30, Instant.now(), "name4"));
-        repo.addTransaction(new Transaction(user1, user2, 60, Instant.now(), "name5"));
-        repo.addTransaction(new Transaction(user2, user1, 90, Instant.now(), "name6"));
+        /*repo.addTransaction(new Transaction(user1, user2, 50, Instant.now(), "name1", tag));
+        repo.addTransaction(new Transaction(user1, user3, 10, Instant.now(), "name2", tag));
+        repo.addTransaction(new Transaction(user3, user4, 20, Instant.now(), "name3", tag));
+        repo.addTransaction(new Transaction(user3, user1, 30, Instant.now(), "name4", tag));
+        repo.addTransaction(new Transaction(user1, user2, 60, Instant.now(), "name5", tag));
+        repo.addTransaction(new Transaction(user2, user1, 90, Instant.now(), "name6", tag));*/
     }
 
     @Test
@@ -36,7 +36,7 @@ class InMemoryTransactionRepositoryTest {
         User userAdd1 = new User("UserAdd1");
         User userAdd2 = new User("UserAdd2");
 
-        repo.addTransaction(new Transaction(userAdd1, userAdd2, 20, Instant.now(), "nameAdd1"));
+        //repo.addTransaction(new Transaction(userAdd1, userAdd2, 20, Instant.now(), "nameAdd1", tag));
 
         assertEquals(7, repo.numberOfTransactions());
     }
@@ -46,7 +46,7 @@ class InMemoryTransactionRepositoryTest {
         User userAdd1 = new User("UserAdd1");
 
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            repo.addTransaction(new Transaction(userAdd1, userAdd1, 20, Instant.now(), "nameAddSame1"));
+            //repo.addTransaction(new Transaction(userAdd1, userAdd1, 20, Instant.now(), "nameAddSame1", tag));
         });
 
         Assertions.assertEquals(IllegalArgumentException.class, thrown.getClass());

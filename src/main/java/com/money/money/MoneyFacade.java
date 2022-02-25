@@ -12,21 +12,29 @@ public class MoneyFacade {
 
     TransactionRepository transactionRepository;
     UserRepository userRepository;
+    TagRepository tagRepository;
 
     MoneyFacade() {
         this.transactionRepository = new InMemoryTransactionRepository();
         this.userRepository = new InMemoryUserRepository();
+        this.tagRepository = new InMemoryTagRepository();
 
         userRepository.addUser(new User("unni"));
         userRepository.addUser(new User("tobias"));
         userRepository.addUser(new User("sponken"));
+
+
+        tagRepository.addTag(new Tag("Mat", ""));
+        tagRepository.addTag(new Tag("Hushåll", "hyra, möbler"));
+        tagRepository.addTag(new Tag("Kläder", ""));
+        tagRepository.addTag(new Tag("Annat", ""));
 
         transactionRepository.addTransaction(new Transaction(
                 userRepository.getUser("unni"),
                 userRepository.getUser("tobias"),
                 200,
                 Instant.now(),
-                "example1")
+                "example1", tagRepository.getTag("Mat"))
         );
 
         transactionRepository.addTransaction(new Transaction(
@@ -34,7 +42,7 @@ public class MoneyFacade {
                 userRepository.getUser("unni"),
                 100,
                 Instant.now(),
-                "example2")
+                "example2", tagRepository.getTag("Hushåll"))
         );
 
         for (int i = 0; i < 6; i++) {
@@ -43,11 +51,10 @@ public class MoneyFacade {
                     userRepository.getUser("unni"),
                     100,
                     Instant.now(),
-                    "example" + i)
+                    "example" + i, tagRepository.getTag("Annat"))
             );
         }
 
-        // "tobias -100-> unni"
     }
 
     public List<User> getAllUsers() {
@@ -93,7 +100,11 @@ public class MoneyFacade {
         return debt;
     }
 
-    public record NewTransactionDTO(String from, String to, Boolean half, int moneyAmount, String name) {
+    public List<Tag> getAllTags() {
+        return tagRepository.getAllTags();
+    }
+
+    public record NewTransactionDTO(String from, String to, Boolean half, int moneyAmount, String name, String tag) {
 
     }
 
@@ -108,23 +119,8 @@ public class MoneyFacade {
                         userRepository.getUser(tDTO.from),
                         userRepository.getUser(tDTO.to),
                         owedSum,
-                        Instant.now(), tDTO.name)
+                        Instant.now(), tDTO.name, tagRepository.getTag(tDTO.tag))
         );
-    }
-
-    public void removeAllDept(User from, User to) {
-        int amount = transactionRepository.owedAmount(from, to);
-        removeSomeDept(from, to, amount);
-    }
-
-    public void removeSomeDept(User from, User to, int amount) {
-        Transaction transaction = new Transaction(
-                from, to,
-                amount,
-                Instant.now(),
-                "Clear " + amount + " dept");
-
-        transactionRepository.addTransaction(transaction);
     }
 
     public User getUser(String name) {
