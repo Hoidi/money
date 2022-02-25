@@ -10,9 +10,9 @@ public class Transaction {
     private final int owedSum;
     private final Instant instant;
     private final String name;
+    private final Tag tag;
 
-    public Transaction(User from, User to, int owedSum, Instant instant, String name) {
-
+    public Transaction(User from, User to, int owedSum, Instant instant, String name, Tag tag) {
         if (from.equals(to)) {
             throw new IllegalArgumentException("Transaction can't be to and from the same user.");
         }
@@ -22,6 +22,7 @@ public class Transaction {
         this.owedSum = owedSum;
         this.instant = instant;
         this.name = name;
+        this.tag = tag;
     }
 
     public User getFrom() {
@@ -42,6 +43,10 @@ public class Transaction {
 
     public String getName() {
         return name;
+    }
+
+    public Tag getTag() {
+        return tag;
     }
 
     public String getDate() {
