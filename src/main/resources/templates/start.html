@@ -39,7 +39,9 @@
 
     <div class="form-row">
         <div class="col" style="padding-left: 0">
-            <input class="form-control" id="moneyAmount" type="number" name="moneyAmount" autocomplete="off" placeholder="Owed amount" pattern="[0-9]*" required>
+            <input class="form-control" id="moneyAmount" name="moneyAmount" autocomplete="off"
+                   placeholder="Owed amount" pattern="[0-9.]*" required
+                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
         </div>
         <div class="col" style="align-self: center; flex: 0">
             <div class="custom-control custom-switch">
