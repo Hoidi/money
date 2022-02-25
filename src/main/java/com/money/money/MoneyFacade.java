@@ -17,6 +17,7 @@ public class MoneyFacade {
     MoneyFacade() {
         this.transactionRepository = new InMemoryTransactionRepository();
         this.userRepository = new InMemoryUserRepository();
+        this.tagRepository = new InMemoryTagRepository();
 
         userRepository.addUser(new User("unni"));
         userRepository.addUser(new User("tobias"));
@@ -97,6 +98,10 @@ public class MoneyFacade {
         }
 
         return debt;
+    }
+
+    public List<Tag> getAllTags() {
+        return tagRepository.getAllTags();
     }
 
     public record NewTransactionDTO(String from, String to, Boolean half, int moneyAmount, String name, String tag) {

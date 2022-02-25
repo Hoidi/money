@@ -9,4 +9,8 @@ public class Tag {
         this.name = tagName;
         this.description = description;
     }
+
+    public String getName() {
+        return name;
+    }
 }

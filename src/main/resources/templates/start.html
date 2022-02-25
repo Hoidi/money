@@ -38,18 +38,27 @@
     </div>
 
     <div class="form-row">
-        <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="half" name="half" th:onclick="myFunction()">
-            <label class="custom-control-label" for="half">Half</label>
+        <div class="col" style="padding-left: 0">
+            <input class="form-control" id="moneyAmount" type="number" name="moneyAmount" autocomplete="off" placeholder="Owed amount" pattern="[0-9]*" required>
+        </div>
+        <div class="col" style="align-self: center; flex: 0">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" style="margin-left: auto; margin-right: auto; margin-top: auto; margin-bottom: auto" id="half" name="half" th:onclick="myFunction()">
+                <label class="custom-control-label" for="half">Half</label>
+            </div>
         </div>
     </div>
 
     <div class="form-row">
-        <input class="form-control" id="moneyAmount" type="number" name="moneyAmount" autocomplete="off" placeholder="Owed amount" pattern="[0-9]*" required>
-    </div>
+        <div class="col" style="padding-left: 0">
+            <input class="form-control" id="name" type="text" name="name" placeholder="Name" autocomplete="off" required>
+        </div>
 
-    <div class="form-row">
-    <input class="form-control" id="name" type="text" name="name" placeholder="Name" autocomplete="off" required>
+        <div class="col"style="padding-right: 0">
+            <select class="form-control" id="tag" name="tag">
+                <option th:each="tag: ${allTags}" th:text="${tag.getName()}" name="tag"></option>
+            </select>
+        </div>
     </div>
 
     <div class="form-row">
