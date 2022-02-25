@@ -1,0 +1,114 @@
+body {
+    background: darkslategray;
+}
+.myform {
+    position: absolute;
+    width: 350px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+label {
+    color: aliceblue;
+}
+.form-row {
+    padding-bottom: 10px;
+    width: 100%;
+}
+.submit {
+    width: 100%;
+}
+.sidebar {
+    position: absolute;
+    top: 50%;
+    width: 250px;
+    height: 60%;
+    max-height: 800px;
+    transform: translate(0, -50%);
+    background: #3A6161;
+    box-shadow: 0 0 10px black;
+    padding-top: 5px;
+    text-align: center;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+}
+.transactions {
+    right: 0;
+    padding-left: 8px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+.debt {
+    left: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.sidebar-title {
+    color: aliceblue;
+}
+.sidebar-text-small {
+    color: aliceblue;
+}
+.transaction-list {
+    text-align: left;
+    overflow-y: scroll;
+}
+.debt-list {
+    text-align: left;
+}
+#toasts {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: row-reverse;
+    z-index: 4;
+}
+.toast-header {
+    display: flex;
+    justify-content: space-between;
+}
+.toast-body {
+    display: flex;
+    flex-direction: row;
+}
+
+
+
+@media screen and (max-width: 1000px) {
+    .myform {
+        width: 80%;
+    }
+    .form-row .form-group {
+        height: 100px;
+    }
+    .sidebar {
+        display: none;
+    }
+    #toasts {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: row-reverse;
+        width: 100%;
+        height: 10%;
+        z-index: 4;
+    }
+    .toast {
+        width: 80%;
+    }
+    .toast-body {
+        font-size: large;
+    }
+    .undo-image {
+        width: 50px;
+    }
+    .toast-header {
+        height: 50px;
+    }
+}
